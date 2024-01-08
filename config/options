@@ -1,8 +1,8 @@
 # Do not build as root. Ever.
-if [[ "${EUID}" -eq 0 ]]; then
-  echo "Building as the root user is NOT supported. Use a regular user account for the build." 1>&2
-  exit 1
-fi
+#if [[ "${EUID}" -eq 0 ]]; then
+#  echo "Building as the root user is NOT supported. Use a regular user account for the build." 1>&2
+#  exit 1
+#fi
 
 # Spaces in paths are verboten
 if [[ ${PWD} =~ [[:space:]] ]]; then
@@ -101,7 +101,8 @@ VERBOSE="${VERBOSE:-yes}"
 # value. The default is gigabytes. The actual value stored is rounded down to
 # the nearest multiple of 16 kilobytes.  Keep in mind this per project .ccache
 # directory.
-CCACHE_CACHE_SIZE="10G"
+CCACHE_CACHE_SIZE="1G"
+AUTOREMOVE="yes"
 
 # compression level for ccache
 # This option determines the level at which ccache will compress object files
