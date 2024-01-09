@@ -38,7 +38,7 @@ make_target() {
 
 makeinstall_target() {
   mkdir -p ${INSTALL}/usr/lib/libretro
-    cp -v "mame*_libretro.so" ${INSTALL}/usr/lib/libretro/
+    cp -v mamearcade_libretro.so ${INSTALL}/usr/lib/libretro/
 
   mkdir -p ${INSTALL}/usr/share/retroarch/system/mame
     cp -vr artwork samples ${INSTALL}/usr/share/retroarch/system/mame
