@@ -1,9 +1,10 @@
 PKG_NAME="mupen64plus_next"
-PKG_VERSION="f1ad37c3a9be64b499d9a36f57e41d59fb677c73"
+PKG_VERSION="c7cd8edcd015ddcbd4a2e984573c9c1d1ddd0b6e"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/mupen64plus-libretro-nx"
 PKG_URL="${PKG_SITE}.git"
 PKG_GIT_CLONE_BRANCH="develop"
+PKG_GIT_SKIP_SUBMODULE="yes"
 PKG_DEPENDS_TARGET="toolchain nasm:host"
 PKG_LONGDESC="mupen64plus_next + RSP-HLE + GLideN64 + libretro"
 
@@ -24,7 +25,7 @@ fi
 
 pre_make_target() {
   if [ "${OPENGLES}" = "libmali" ]; then
-    CLAGS+=" -DGL_USE_DLSYM"
+    CFLAGS+=" -DGL_USE_DLSYM"
     CXXFLAGS+=" -DGL_USE_DLSYM"
     LDFLAGS+=" -ldl"
   elif [ "${OPENGLES}" = "bcm2835-driver" ]; then
@@ -47,8 +48,14 @@ pre_make_target() {
     Pi02GPi)
       PKG_MAKE_OPTS_TARGET+=" platform=rpi3"
       ;;
+    RPiZero2-GPiCASE2W)
+      PKG_MAKE_OPTS_TARGET+=" platform=rpi3_64-mesa"
+      ;;
     RPi4*)
       PKG_MAKE_OPTS_TARGET+=" platform=rpi4_64-mesa FORCE_GLES3=1"
+      ;;
+    RPi5)
+      PKG_MAKE_OPTS_TARGET+=" platform=rpi5_64-mesa FORCE_GLES3=1"
       ;;
     Exynos)
       PKG_MAKE_OPTS_TARGET+=" platform=odroid BOARD=ODROID-XU"
