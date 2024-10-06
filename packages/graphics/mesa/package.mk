@@ -3,8 +3,8 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mesa"
-PKG_VERSION="23.3.2"
-PKG_SHA256="3cfcb81fa16f89c56abe3855d2637d396ee4e03849b659000a6b8e5f57e69adc"
+PKG_VERSION="24.0.8"
+PKG_SHA256="d1ed86a266d5b7b8c136ae587ef5618ed1a9837a43440f3713622bf0123bf5c1"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.mesa3d.org/"
 PKG_URL="https://mesa.freedesktop.org/archive/mesa-${PKG_VERSION}.tar.xz"
@@ -62,10 +62,6 @@ else
                            -Dglx=disabled"
 fi
 
-if listcontains "${GRAPHIC_DRIVERS}" "iris"; then
-  PKG_MESON_OPTS_TARGET+=" -Dintel-xe-kmd=enabled"
-fi
-
 if listcontains "${GRAPHIC_DRIVERS}" "(nvidia|nvidia-ng)"; then
   PKG_DEPENDS_TARGET+=" libglvnd"
   PKG_MESON_OPTS_TARGET+=" -Dglvnd=true"
@@ -114,6 +110,11 @@ if [ "${VULKAN_SUPPORT}" = "yes" ]; then
   PKG_MESON_OPTS_TARGET+=" -Dvulkan-drivers=${VULKAN_DRIVERS_MESA// /,}"
 else
   PKG_MESON_OPTS_TARGET+=" -Dvulkan-drivers="
+fi
+
+if [ "${ARCH}" = "i386" ]; then
+  TARGET_ARCH="x86"
+  TARGET_SUBARCH="x86"
 fi
 
 post_makeinstall_target() {
