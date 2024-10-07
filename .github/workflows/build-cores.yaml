@@ -1,0 +1,177 @@
+name: Build cores
+on:
+  schedule:
+    - cron: '37 3 5 * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    name: Build cores
+    runs-on: ubuntu-latest
+    container: node:current-buster-slim
+    steps:
+      - name: Synk fork
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          cd ..
+          rm -rf ${GITHUB_REPOSITORY}
+          apt-get update
+          apt-get install --assume-yes git curl
+          git clone "https://${GITHUB_REPOSITORY_OWNER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /__w/
+          cd /__w/${GITHUB_REPOSITORY}
+          git config --global --add safe.directory /__w/${GITHUB_REPOSITORY}
+          git config user.name "${GITHUB_REPOSITORY_OWNER}"
+          git config user.email "${GITHUB_REPOSITORY_OWNER}@users.noreply.github.com"
+          git config --local user.password ${GITHUB_TOKEN}
+          git remote add upstream "https://github.com/libretro/Lakka-LibreELEC.git"
+          git checkout Lakka-v5.x
+          git fetch upstream
+          git merge upstream/Lakka-v5.x
+          git push origin Lakka-v5.x
+      - name: Get latest version of cores
+        if: ${{ ! cancelled() }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          mkdir -p /__w/cores-armv7-neon-hf
+          echo "RELEASE_DATE=$(date +%F)" >> $GITHUB_ENV
+          echo "Core: FBALPHA2012 (getting latest version)"
+          build_core_fbalpha2012=${{ false }}
+          fbalpha2012_latest_version=$(git ls-remote -q https://github.com/libretro/fbalpha2012 HEAD | sed -e 's:\t.*::')
+          echo "fbalpha2012_latest_version=${fbalpha2012_latest_version}"
+          echo "fbalpha2012_latest_version=${fbalpha2012_latest_version}" >> "$GITHUB_ENV"
+          fbalpha2012_latest_name=$(echo "${fbalpha2012_latest_version}" | head -c 7)
+          echo "fbalpha2012_latest_name=${fbalpha2012_latest_name}"
+          echo "fbalpha2012_latest_name=${fbalpha2012_latest_name}" >> "$GITHUB_ENV"
+          if curl --output-dir /__w/cores-armv7-neon-hf -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/fbalpha2012_libretro.${fbalpha2012_latest_name}.zip" ; then
+          echo "fbalpha2012_libretro.${fbalpha2012_latest_name}.zip already exists."
+          else
+          build_core_fbalpha2012=${{ true }}
+          fi
+          echo "build_core_fbalpha2012=${build_core_fbalpha2012}" >> "$GITHUB_ENV"
+          echo "build_core_fbalpha2012=${build_core_fbalpha2012}"
+          echo "Core: FBNEO (getting latest version)"
+          build_core_fbneo=${{ false }}
+          fbneo_latest_version=$(git ls-remote -q https://github.com/libretro/FBNeo HEAD | sed -e 's:\t.*::')
+          echo "fbneo_latest_version=${fbneo_latest_version}"
+          echo "fbneo_latest_version=${fbneo_latest_version}" >> "$GITHUB_ENV"
+          fbneo_latest_name=$(echo "${fbneo_latest_version}" | head -c 7)
+          echo "fbneo_latest_name=${fbneo_latest_name}"
+          echo "fbneo_latest_name=${fbneo_latest_name}" >> "$GITHUB_ENV"
+          if curl --output-dir /__w/cores-armv7-neon-hf -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/fbneo_libretro.${fbneo_latest_name}.zip" ; then
+          echo "fbneo_libretro.${fbneo_latest_name}.zip already exists."
+          else
+          build_core_fbneo=${{ true }}
+          fi
+          echo "build_core_fbneo=${build_core_fbneo}" >> "$GITHUB_ENV"
+          echo "build_core_fbneo=${build_core_fbneo}"
+          echo "Core: MAME2003+ (getting latest version)"
+          build_core_mame2003plus=${{ false }}
+          mame2003plus_latest_version=$(git ls-remote -q https://github.com/libretro/mame2003-plus-libretro HEAD | sed -e 's:\t.*::')
+          echo "mame2003plus_latest_version=${mame2003plus_latest_version}"
+          echo "mame2003plus_latest_version=${mame2003plus_latest_version}" >> "$GITHUB_ENV"
+          mame2003plus_latest_name=$(echo "${mame2003plus_latest_version}" | head -c 7)
+          echo "mame2003plus_latest_name=${mame2003plus_latest_name}"
+          echo "mame2003plus_latest_name=${mame2003plus_latest_name}" >> "$GITHUB_ENV"
+          if curl --output-dir /__w/cores-armv7-neon-hf -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/mame2003_plus_libretro.${mame2003plus_latest_name}.zip" ; then
+          echo "mame2003_plus_libretro.${mame2003plus_latest_name}.zip already exists."
+          else
+          build_core_mame2003plus=${{ true }}
+          fi
+          echo "build_core_mame2003plus=${build_core_mame2003plus}" >> "$GITHUB_ENV"
+          echo "build_core_mame2003plus=${build_core_mame2003plus}"
+          echo "Core: MAME (getting latest version)"
+          build_core_mame=${{ false }}
+          mame_tag_version=$(git ls-remote -q -t --sort=-refname https://github.com/libretro/mame 'lrmame*^{}' | grep -m1 lrmame | sed -e 's:\t.*::')
+          echo "mame_tag_version=${mame_tag_version}"
+          echo "mame_tag_version=${mame_tag_version}" >> "$GITHUB_ENV"
+          mame_tag_name=$(git ls-remote -q -t --sort=-refname https://github.com/libretro/mame 'lrmame*^{}' | grep -m1 lrmame | sed -e 's:^.*tags/::' -e 's:\^.*::')
+          echo "mame_tag_name=${mame_tag_name}"
+          echo "mame_tag_name=${mame_tag_name}" >> "$GITHUB_ENV"
+          if curl --output-dir /__w/cores-armv7-neon-hf -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/mame_libretro.${mame_tag_name}.zip" ; then
+          echo "mame_libretro.${mame_tag_name}.zip already exists."
+          else
+          build_core_mame=${{ true }}
+          fi
+          echo "build_core_mame=${build_core_mame}" >> "$GITHUB_ENV"
+          echo "build_core_mame=${build_core_mame}"
+      - name: Install compiling tools
+        if: ${{ ( env.build_core_fbalpha2012 == 'true' || env.build_core_fbneo == 'true' || env.build_core_mame2003plus == 'true' || env.build_core_mame == 'true' ) && ! cancelled() }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          apt-get install --assume-yes ca-certificates build-essential zip python3 xfonts-utils xsltproc default-jre unzip xz-utils texi2html texinfo
+          apt-get install --assume-yes libxml-parser-perl libparse-yapp-perl libjson-perl libncurses5-dev bc gawk wget zstd gperf lzop patchutils sudo
+          apt-get install --assume-yes aria2 autoconf automake bison bzip2 coreutils flex g++ gcc gzip help2man libtool libtool-bin make p7zip p7zip-full rsync
+      - name: Compile fbalpha2012 core
+        if: ${{ env.build_core_fbalpha2012 == 'true' && ! cancelled() }}
+        shell: bash
+        run: |
+          sed -i -e "/.*PKG_VERSION\=.*/{s//PKG_VERSION=\"${fbalpha2012_latest_version}\"/;:a" -e '$!N;$!ba' -e '}' packages/lakka/libretro_cores/fbalpha2012/package.mk
+          GIT_DISCOVERY_ACROSS_FILESYSTEM=1 CCACHE_DISABLE=1 DISTRO=Lakka PROJECT=Allwinner DEVICE=H3 ARCH=arm UBOOT_SYSTEM=capcom-home-arcade scripts/build lakka/libretro_cores/fbalpha2012
+          mkdir -p "fbalpha2012_libretro.${fbalpha2012_latest_name}"
+          if mv -v "build.Lakka-H3.arm-5.0-devel/install_pkg/fbalpha2012-${fbalpha2012_latest_version}/usr/lib/libretro/fbalpha2012_libretro.so" "fbalpha2012_libretro.${fbalpha2012_latest_name}"/ ; then
+          find packages/lakka/libretro_cores/fbalpha2012/ -iname 'FB Alpha v0.2.97.30 (*).dat' -type f -exec mv -fv {} "fbalpha2012_libretro.${fbalpha2012_latest_name}"/ \;
+          zip -9 -jmr "/__w/cores-armv7-neon-hf/fbalpha2012_libretro.${fbalpha2012_latest_name}.zip" "fbalpha2012_libretro.${fbalpha2012_latest_name}"
+          fi
+          rm -rf "sources/fbalpha2012/fbalpha2012-${fbalpha2012_latest_version}"
+      - name: Compile fbneo core
+        if: ${{ env.build_core_fbneo == 'true' && ! cancelled() }}
+        shell: bash
+        run: |
+          sed -i -e "/.*PKG_VERSION\=.*/{s//PKG_VERSION=\"${fbneo_latest_version}\"/;:a" -e '$!N;$!ba' -e '}' packages/lakka/libretro_cores/fbneo/package.mk
+          GIT_DISCOVERY_ACROSS_FILESYSTEM=1 CCACHE_DISABLE=1 DISTRO=Lakka PROJECT=Allwinner DEVICE=H3 ARCH=arm UBOOT_SYSTEM=capcom-home-arcade scripts/build lakka/libretro_cores/fbneo
+          mkdir -p "fbneo_libretro.${fbneo_latest_name}"
+          if mv -v "build.Lakka-H3.arm-5.0-devel/install_pkg/fbneo-${fbneo_latest_version}/usr/lib/libretro/fbneo_libretro.so" "fbneo_libretro.${fbneo_latest_name}"/ ; then
+          find "build.Lakka-H3.arm-5.0-devel/install_pkg/fbneo-${fbneo_latest_version}/usr/share/libretro-database/fbneo"/ -iname 'FinalBurn Neo (*).dat' -type f -exec mv -fv {} "fbneo_libretro.${fbneo_latest_name}"/ \;
+          zip -9 -jmr "/__w/cores-armv7-neon-hf/fbneo_libretro.${fbneo_latest_name}.zip" "fbneo_libretro.${fbneo_latest_name}"
+          fi
+          rm -rf "sources/fbneo/fbneo-${fbneo_latest_version}"
+      - name: Compile mame2003_plus core
+        if: ${{ env.build_core_mame2003plus == 'true' && ! cancelled() }}
+        shell: bash
+        run: |
+          sed -i -e "/.*PKG_VERSION\=.*/{s//PKG_VERSION=\"${mame2003plus_latest_version}\"/;:a" -e '$!N;$!ba' -e '}' packages/lakka/libretro_cores/mame2003_plus/package.mk
+          GIT_DISCOVERY_ACROSS_FILESYSTEM=1 CCACHE_DISABLE=1 DISTRO=Lakka PROJECT=Allwinner DEVICE=H3 ARCH=arm UBOOT_SYSTEM=capcom-home-arcade scripts/build lakka/libretro_cores/mame2003_plus
+          mkdir -p "mame2003_plus_libretro.${mame2003plus_latest_name}"
+          if mv -v "build.Lakka-H3.arm-5.0-devel/install_pkg/mame2003_plus-${mame2003plus_latest_version}/usr/lib/libretro/mame2003_plus_libretro.so" "mame2003_plus_libretro.${mame2003plus_latest_name}"/ ; then
+          mv -fv "build.Lakka-H3.arm-5.0-devel/install_pkg/mame2003_plus-${mame2003plus_latest_version}/usr/share/libretro-database/mame2003-plus/mame2003-plus.xml" "mame2003_plus_libretro.${mame2003plus_latest_name}"/
+          zip -9 -jmr "/__w/cores-armv7-neon-hf/mame2003_plus_libretro.${mame2003plus_latest_name}.zip" "mame2003_plus_libretro.${mame2003plus_latest_name}"
+          fi
+          rm -rf "sources/mame2003_plus/mame2003_plus-${mame2003plus_latest_version}"
+      - name: Compile mame core
+        if: ${{ env.build_core_mame == 'true' && ! cancelled() }}
+        shell: bash
+        run: |
+          sed -i -e "/.*PKG_VERSION\=.*/{s//PKG_VERSION=\"${mame_tag_version}\"/;:a" -e '$!N;$!ba' -e '}' packages/lakka/libretro_cores/mame/package.mk
+          GIT_DISCOVERY_ACROSS_FILESYSTEM=1 CCACHE_DISABLE=1 DISTRO=Lakka PROJECT=Allwinner DEVICE=H3 ARCH=arm UBOOT_SYSTEM=capcom-home-arcade scripts/build lakka/libretro_cores/mame
+          mkdir -p "mame_libretro.${mame_tag_name}"
+          if mv -v "build.Lakka-H3.arm-5.0-devel/install_pkg/mame-${mame_tag_version}/usr/lib/libretro/mamearcade_libretro.so" "mame_libretro.${mame_tag_name}"/mame_libretro.so ; then
+          curl -s -L -o "${mame_tag_name:2}lx.zip" "https://github.com/mamedev/mame/releases/download/${mame_tag_name:2}/${mame_tag_name:2}lx.zip" && unzip -j "${mame_tag_name:2}lx.zip" -d "mame_libretro.${mame_tag_name}"/
+          zip -9 -jmr "/__w/cores-armv7-neon-hf/mame_libretro.${mame_tag_name}.zip" "mame_libretro.${mame_tag_name}"
+          fi
+          rm -rf "sources/mame/mame-${mame_tag_version}"
+      - name: Create release
+        if: ${{ ( env.build_core_fbalpha2012 == 'true' || env.build_core_fbneo == 'true' || env.build_core_mame2003plus == 'true' || env.build_core_mame == 'true' ) && ! cancelled() }}
+        uses: softprops/action-gh-release@master
+        with:
+          files: /__w/cores-armv7-neon-hf/*
+          tag_name: cores-armv7-neon-hf-${{ env.RELEASE_DATE }}
+          name: Cores for armv7-neon-hf (${{ env.RELEASE_DATE }})
+          body: |
+            fbalpha2012:  ${fbalpha2012_latest_name}
+            fbneo:        ${fbneo_latest_name}
+            mame2003plus: ${mame2003plus_latest_name}
+            mame:         ${mame_tag_name}
+      - name: Clean up old releases
+        uses: dev-drprasad/delete-older-releases@master
+        with:
+          keep_latest: 3
+          delete_tags: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

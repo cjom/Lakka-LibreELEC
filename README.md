@@ -1,21 +1,14 @@
-# Lakka - The DIY retro emulation console
+Use github actions and Lakka repository to compile libretro cores for armv7-neon-hf devices.
 
-Lakka is a lightweight Linux distribution that transforms a small computer into a full blown emulation console.
+One possible use is update Lakka or Batocera cores.
 
-## Why use Lakka?
+With each core there is an 'extra' folder that includes xml/dat files and some other files (inside the zip file).
 
-* **Powerful** - Built on top of the famous RetroArch emulator, Lakka is able to emulate a large range of hardware and has some useful features such as Braid-like rewinding, joypad hotplug and video streaming.
-* **User friendly** - Lakka is easy to setup and use. Once installed to your SD card, you just have to put your rom on the card, plug your joypad and enjoy your favorite old games. We also support PS3 and XBox360 controllers so you don't have to buy new ones. 
-* **Low cost** - We try our best to keep the hardware required to run Lakka as cheap as possible. The software is optimized to run fast even on low end computers. The power can be supplied by any micro USB adapter like the one for your smartphone.
-* **Open source** - Our code is free as in freedom and hosted on Github (though the project uses emulators that forbid commercialisation). We accept external contributions, and we do our best to integrate our own patches into upstream projects.
+Download the available cores in [releases](https://github.com/cjom/Lakka-LibreELEC/releases)
 
-## Installation instructions
-
-Please refer to our website https://www.lakka.tv/get on how to setup Lakka.
-
-## Support
-
-* [FAQ](https://github.com/libretro/Lakka-LibreELEC/wiki/FAQ)
-* #lakkatv on irc.libera.chat
-* [Discord](https://discord.gg/BNFR4hM)
-* [Forums](https://forums.libretro.com/c/libretro/lakka-tv-general)
+Cores building:
+  - fbalpha2012 ( [v0.2.97.30](https://github.com/libretro/fbalpha2012/commit/134c55b98b64e620a703a85061ce317fdc5816d0) maybe? If so, it is based on MAME 0.154 - Jul 2014)
+  - fbneo_libretro.so
+  - mame2003_plus_libretro.so
+  - mamearcade_libretro.so (renamed mame_libretro.so)
+  
