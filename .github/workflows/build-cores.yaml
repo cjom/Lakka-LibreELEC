@@ -16,8 +16,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
+          cd ..
+          rm -rf ${GITHUB_REPOSITORY}
           apt-get update
           apt-get install --assume-yes git curl
+          git clone "https://${GITHUB_REPOSITORY_OWNER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /__w/${GITHUB_REPOSITORY}
+          cd /__w/${GITHUB_REPOSITORY}
           git config --global --add safe.directory /__w/${GITHUB_REPOSITORY}
           git config user.name "${GITHUB_REPOSITORY_OWNER}"
           git config user.email "${GITHUB_REPOSITORY_OWNER}@users.noreply.github.com"
@@ -43,7 +47,7 @@ jobs:
           fbalpha2012_latest_name=$(echo "${fbalpha2012_latest_version}" | head -c 7)
           echo "fbalpha2012_latest_name=${fbalpha2012_latest_name}"
           echo "fbalpha2012_latest_name=${fbalpha2012_latest_name}" >> "$GITHUB_ENV"
-          if curl --output-dir /__w/cores-armv7-neon-hf -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/fbalpha2012_libretro.${fbalpha2012_latest_name}.zip" ; then
+          if curl -o "/__w/cores-armv7-neon-hf/fbalpha2012_libretro.${fbalpha2012_latest_name}.zip" -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/fbalpha2012_libretro.${fbalpha2012_latest_name}.zip" ; then
           echo "fbalpha2012_libretro.${fbalpha2012_latest_name}.zip already exists."
           else
           build_core_fbalpha2012=${{ true }}
@@ -58,7 +62,7 @@ jobs:
           fbneo_latest_name=$(echo "${fbneo_latest_version}" | head -c 7)
           echo "fbneo_latest_name=${fbneo_latest_name}"
           echo "fbneo_latest_name=${fbneo_latest_name}" >> "$GITHUB_ENV"
-          if curl --output-dir /__w/cores-armv7-neon-hf -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/fbneo_libretro.${fbneo_latest_name}.zip" ; then
+          if curl -o "/__w/cores-armv7-neon-hf/fbneo_libretro.${fbneo_latest_name}.zip" -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/fbneo_libretro.${fbneo_latest_name}.zip" ; then
           echo "fbneo_libretro.${fbneo_latest_name}.zip already exists."
           else
           build_core_fbneo=${{ true }}
@@ -73,7 +77,7 @@ jobs:
           mame2003plus_latest_name=$(echo "${mame2003plus_latest_version}" | head -c 7)
           echo "mame2003plus_latest_name=${mame2003plus_latest_name}"
           echo "mame2003plus_latest_name=${mame2003plus_latest_name}" >> "$GITHUB_ENV"
-          if curl --output-dir /__w/cores-armv7-neon-hf -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/mame2003_plus_libretro.${mame2003plus_latest_name}.zip" ; then
+          if curl -o "/__w/cores-armv7-neon-hf/mame2003_plus_libretro.${mame2003plus_latest_name}.zip" -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/mame2003_plus_libretro.${mame2003plus_latest_name}.zip" ; then
           echo "mame2003_plus_libretro.${mame2003plus_latest_name}.zip already exists."
           else
           build_core_mame2003plus=${{ true }}
@@ -88,7 +92,7 @@ jobs:
           mame_tag_name=$(git ls-remote -q -t --sort=-refname https://github.com/libretro/mame 'lrmame*^{}' | grep -m1 lrmame | sed -e 's:^.*tags/::' -e 's:\^.*::')
           echo "mame_tag_name=${mame_tag_name}"
           echo "mame_tag_name=${mame_tag_name}" >> "$GITHUB_ENV"
-          if curl --output-dir /__w/cores-armv7-neon-hf -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/mame_libretro.${mame_tag_name}.zip" ; then
+          if curl -o "/__w/cores-armv7-neon-hf/mame_libretro.${mame_tag_name}.zip" -sfIL "https://github.com/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/releases/latest/download/mame_libretro.${mame_tag_name}.zip" ; then
           echo "mame_libretro.${mame_tag_name}.zip already exists."
           else
           build_core_mame=${{ true }}
