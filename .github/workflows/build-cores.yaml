@@ -16,12 +16,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
+          echo "Current dir = $PWD"
           cd ..
-          rm -rf /home/runner/work/Lakka-LibreELEC
+          rm -rf Lakka-LibreELEC
           apt-get update
           apt-get install --assume-yes git curl
-          git clone "https://${GITHUB_REPOSITORY_OWNER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /home/runner/work/Lakka-LibreELEC
-          cd /home/runner/work/Lakka-LibreELEC
+          git clone "https://${GITHUB_REPOSITORY_OWNER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" Lakka-LibreELEC
+          cd Lakka-LibreELEC
           git config --global --add safe.directory /home/runner/work/Lakka-LibreELEC
           git config user.name "${GITHUB_REPOSITORY_OWNER}"
           git config user.email "${GITHUB_REPOSITORY_OWNER}@users.noreply.github.com"
@@ -37,6 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
+          ls -Rla ../
           mkdir -p cores-armv7-neon-hf
           echo "RELEASE_DATE=$(date +%F)" >> $GITHUB_ENV
           echo "Core: FBALPHA2012 (getting latest version)"
@@ -112,7 +114,6 @@ jobs:
         if: ${{ env.build_core_fbalpha2012 == 'true' && ! cancelled() }}
         shell: bash
         run: |
-          ls -Rla
           sed -i -e "/.*PKG_VERSION\=.*/{s//PKG_VERSION=\"${fbalpha2012_latest_version}\"/;:a" -e '$!N;$!ba' -e '}' packages/lakka/libretro_cores/fbalpha2012/package.mk
           GIT_DISCOVERY_ACROSS_FILESYSTEM=1 CCACHE_DISABLE=1 DISTRO=Lakka PROJECT=Allwinner DEVICE=H3 ARCH=arm UBOOT_SYSTEM=capcom-home-arcade scripts/build lakka/libretro_cores/fbalpha2012
           mkdir -p "fbalpha2012_libretro.${fbalpha2012_latest_name}"
