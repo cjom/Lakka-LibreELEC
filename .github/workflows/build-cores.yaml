@@ -20,7 +20,7 @@ jobs:
           rm -rf /home/runner/work/Lakka-LibreELEC
           apt-get update
           apt-get install --assume-yes git curl
-          git clone "https://${GITHUB_REPOSITORY_OWNER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" .
+          git clone "https://${GITHUB_REPOSITORY_OWNER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /home/runner/work/Lakka-LibreELEC
           cd /home/runner/work/Lakka-LibreELEC
           git config --global --add safe.directory /home/runner/work/Lakka-LibreELEC
           git config user.name "${GITHUB_REPOSITORY_OWNER}"
