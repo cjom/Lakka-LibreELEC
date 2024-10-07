@@ -154,14 +154,14 @@ jobs:
         if: ${{ ( env.build_core_fbalpha2012 == 'true' || env.build_core_fbneo == 'true' || env.build_core_mame2003plus == 'true' || env.build_core_mame == 'true' ) && ! cancelled() }}
         uses: softprops/action-gh-release@master
         with:
-          files: /__w/cores-armv7-neon-hf/*
+          files: /__w/cores-armv7-neon-hf/*.zip
           tag_name: cores-armv7-neon-hf-${{ env.RELEASE_DATE }}
           name: Cores for armv7-neon-hf (${{ env.RELEASE_DATE }})
           body: |
-            fbalpha2012:  ${fbalpha2012_latest_name}
-            fbneo:        ${fbneo_latest_name}
-            mame2003plus: ${mame2003plus_latest_name}
-            mame:         ${mame_tag_name}
+            fbalpha2012:  ${{ env.fbalpha2012_latest_name }}
+            fbneo:        ${{ env.fbneo_latest_name }}
+            mame2003plus: ${{ env.mame2003plus_latest_name }}
+            mame:         ${{ env.mame_tag_name }}
       - name: Clean up old releases
         uses: dev-drprasad/delete-older-releases@master
         with:
