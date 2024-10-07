@@ -16,12 +16,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          cd ..
-          rm -rf ${GITHUB_REPOSITORY}
-          apt-get update
-          apt-get install --assume-yes git curl
-          git clone "https://${GITHUB_REPOSITORY_OWNER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" /__w/
-          cd /__w/${GITHUB_REPOSITORY}
           git config --global --add safe.directory /__w/${GITHUB_REPOSITORY}
           git config user.name "${GITHUB_REPOSITORY_OWNER}"
           git config user.email "${GITHUB_REPOSITORY_OWNER}@users.noreply.github.com"
