@@ -112,6 +112,7 @@ jobs:
         if: ${{ env.build_core_fbalpha2012 == 'true' && ! cancelled() }}
         shell: bash
         run: |
+          ls -Rla
           sed -i -e "/.*PKG_VERSION\=.*/{s//PKG_VERSION=\"${fbalpha2012_latest_version}\"/;:a" -e '$!N;$!ba' -e '}' packages/lakka/libretro_cores/fbalpha2012/package.mk
           GIT_DISCOVERY_ACROSS_FILESYSTEM=1 CCACHE_DISABLE=1 DISTRO=Lakka PROJECT=Allwinner DEVICE=H3 ARCH=arm UBOOT_SYSTEM=capcom-home-arcade scripts/build lakka/libretro_cores/fbalpha2012
           mkdir -p "fbalpha2012_libretro.${fbalpha2012_latest_name}"
