@@ -16,14 +16,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          echo "Current dir = $PWD"
           cd ..
           rm -rf Lakka-LibreELEC
           apt-get update
           apt-get install --assume-yes git curl
           git clone "https://${GITHUB_REPOSITORY_OWNER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" Lakka-LibreELEC
           cd Lakka-LibreELEC
-          git config --global --add safe.directory /home/runner/work/Lakka-LibreELEC
+          git config --global --add safe.directory /__w/Lakka-LibreELEC/Lakka-LibreELEC
           git config user.name "${GITHUB_REPOSITORY_OWNER}"
           git config user.email "${GITHUB_REPOSITORY_OWNER}@users.noreply.github.com"
           git config --local user.password ${GITHUB_TOKEN}
@@ -38,7 +37,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          ls -Rla ../
           mkdir -p cores-armv7-neon-hf
           echo "RELEASE_DATE=$(date +%F)" >> $GITHUB_ENV
           echo "Core: FBALPHA2012 (getting latest version)"
