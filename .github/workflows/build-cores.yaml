@@ -141,7 +141,7 @@ jobs:
           mkdir -p "mame2003_plus_libretro.${mame2003plus_latest_name}"
           if mv -v "/__w/Lakka-LibreELEC/Lakka-LibreELEC/build.Lakka-H3.arm/install_pkg/mame2003_plus-${mame2003plus_latest_version}/usr/lib/libretro/mame2003_plus_libretro.so" "mame2003_plus_libretro.${mame2003plus_latest_name}"/ ; then
           mv -fv "/__w/Lakka-LibreELEC/Lakka-LibreELEC/build.Lakka-H3.arm/install_pkg/mame2003_plus-${mame2003plus_latest_version}/usr/share/libretro-database/mame2003-plus/mame2003-plus.xml" "mame2003_plus_libretro.${mame2003plus_latest_name}"/
-          mv -rfv "/__w/Lakka-LibreELEC/Lakka-LibreELEC/build.Lakka-H3.arm/install_pkg/mame2003_plus-${mame2003plus_latest_version}/usr/share/retroarch/system/mame2003-plus"/* "mame2003_plus_libretro.${mame2003plus_latest_name}"/
+          mv -fv "/__w/Lakka-LibreELEC/Lakka-LibreELEC/build.Lakka-H3.arm/install_pkg/mame2003_plus-${mame2003plus_latest_version}/usr/share/retroarch/system/mame2003-plus"/* "mame2003_plus_libretro.${mame2003plus_latest_name}"/
           zip -9 -jmr "/__w/Lakka-LibreELEC/cores-armv7-neon-hf/mame2003_plus_libretro.${mame2003plus_latest_name}.zip" "mame2003_plus_libretro.${mame2003plus_latest_name}"
           fi
           rm -rf "sources/mame2003_plus/mame2003_plus-${mame2003plus_latest_version}"
@@ -154,7 +154,7 @@ jobs:
           mkdir -p "mame_libretro.${mame_tag_name}"
           if mv -v "/__w/Lakka-LibreELEC/Lakka-LibreELEC/build.Lakka-H3.arm/install_pkg/mame-${mame_tag_version}/usr/lib/libretro/mamearcade_libretro.so" "mame_libretro.${mame_tag_name}"/mame_libretro.so ; then
           curl -s -L -o "${mame_tag_name:2}lx.zip" "https://github.com/mamedev/mame/releases/download/${mame_tag_name:2}/${mame_tag_name:2}lx.zip" && unzip -j "${mame_tag_name:2}lx.zip" -d "mame_libretro.${mame_tag_name}"/
-          mv -rfv "/__w/Lakka-LibreELEC/Lakka-LibreELEC/build.Lakka-H3.arm/install_pkg/mame-${mame_tag_version}/usr/share/retroarch/system/mame"/* "mame_libretro.${mame_tag_name}"/
+          mv -fv "/__w/Lakka-LibreELEC/Lakka-LibreELEC/build.Lakka-H3.arm/install_pkg/mame-${mame_tag_version}/usr/share/retroarch/system/mame"/* "mame_libretro.${mame_tag_name}"/
           zip -9 -jmr "/__w/Lakka-LibreELEC/cores-armv7-neon-hf/mame_libretro.${mame_tag_name}.zip" "mame_libretro.${mame_tag_name}"
           fi
           rm -rf "sources/mame/mame-${mame_tag_version}"
