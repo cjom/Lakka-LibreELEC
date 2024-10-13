@@ -29,6 +29,11 @@ pre_make_target() {
   PKG_MAKE_OPTS_TARGET+=" OVERRIDE_CC=${CC} OVERRIDE_CXX=${CXX} OVERRIDE_LD=${LD}"
   sed -i scripts/genie.lua \
       -e 's|-static-libstdc++||g'
+  # remove skeleton drivers to save space
+  find src/mame/ -type f | xargs grep MACHINE_IS_SKELETON | cut -f 1 -d ":" | sort -u > machines.list
+  find src/mame/ -type f | xargs grep MACHINE_IS_SKELETON | cut -f 2 -d "," | sort -bu > games.list
+  cat machines.list | while read file ; do sed -i '/MACHINE_IS_SKELETON/d' $$file ; done
+  cat games.list | while read file ; do sed -i /$$file/d src/mame/mame.lst ; done
 }
 
 make_target() {
