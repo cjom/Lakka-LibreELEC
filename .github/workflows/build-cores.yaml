@@ -27,10 +27,10 @@ jobs:
           git config user.email "${GITHUB_REPOSITORY_OWNER}@users.noreply.github.com"
           git config --local user.password ${GITHUB_TOKEN}
           git remote add upstream "https://github.com/libretro/Lakka-LibreELEC.git"
-          git checkout Lakka-v5.x
+          git checkout Lakka-v6.x
           git fetch upstream
-          git merge upstream/Lakka-v5.x
-          git push origin Lakka-v5.x
+          git merge upstream/Lakka-v6.x
+          git push origin Lakka-v6.x
       - name: Get latest version of cores
         if: ${{ ! cancelled() }}
         env:
