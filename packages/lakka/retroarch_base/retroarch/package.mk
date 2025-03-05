@@ -1,5 +1,5 @@
 PKG_NAME="retroarch"
-PKG_VERSION="0792144fe3a7b59908b0afdb2c01722e79040360"
+PKG_VERSION="ab3b175848fa6cd8b2340809631e30bc0fe1d136"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/RetroArch"
 PKG_URL="${PKG_SITE}.git"
@@ -18,6 +18,8 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-vg \
                            --enable-command \
                            --enable-kms \
                            --enable-egl \
+                           --enable-ssl \
+                           --enable-builtinmbedtls \
                            --datarootdir=${SYSROOT_PREFIX}/usr/share" # don't use host /usr/share!
 
 PKG_MAKE_OPTS_TARGET="V=1 \
@@ -28,6 +30,9 @@ PKG_MAKE_OPTS_TARGET="V=1 \
                       HAVE_HAVE_ZARCH=0 \
                       HAVE_WIFI=1 \
                       HAVE_BLUETOOTH=1 \
+                      HAVE_CLOUDSYNC=1 \
+                      HAVE_SSL=1 \
+                      HAVE_BUILTINMBEDTLS=1 \
                       HAVE_FREETYPE=1"
 
 if [ "${OPENGLES_SUPPORT}" = yes ]; then
@@ -58,14 +63,6 @@ if [ "${VULKAN_SUPPORT}" = yes ]; then
   PKG_CONFIGURE_OPTS_TARGET+=" --enable-vulkan"
 else
   PKG_CONFIGURE_OPTS_TARGET+=" --disable-vulkan"
-fi
-
-if [ "${SAMBA_SUPPORT}" = yes ]; then
-  PKG_DEPENDS_TARGET+=" samba"
-fi
-
-if [ "${AVAHI_DAEMON}" = yes ]; then
-  PKG_DEPENDS_TARGET+=" avahi nss-mdns"
 fi
 
 if [ "${DISPLAYSERVER}" != "no" ]; then

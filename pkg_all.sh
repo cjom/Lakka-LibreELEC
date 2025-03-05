@@ -12,17 +12,17 @@ usage() {
 case ${1} in
 	clean)
 		action=${1}
-		script="./scripts/clean"
+		script="scripts/clean"
 		activity="Cleaning"
 		;;
 	build)
 		action=${1}
-		script="./scripts/build"
+		script="scripts/build"
 		activity="Compilation"
 		;;
 	unpack)
 		action=${1}
-		script="./scripts/unpack"
+		script="scripts/unpack"
 		activity="Unpacking"
 		;;
 	*)
