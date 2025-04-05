@@ -35,6 +35,12 @@ PKG_MAKE_OPTS_TARGET="V=1 \
                       HAVE_BUILTINMBEDTLS=1 \
                       HAVE_FREETYPE=1"
 
+if [ "${PROJECT}" = "RPi" ]; then
+  if [ "${DEVICE}" = "RPi3" -o "${DEVICE}" = "RPi4" -o "${DEVICE}" = "RPi5" ]; then
+    PKG_MAKE_OPTS_TARGET+=" HAVE_RETROFLAG=1"
+  fi
+fi
+
 if [ "${OPENGLES_SUPPORT}" = yes ]; then
   PKG_DEPENDS_TARGET+=" ${OPENGLES}"
   PKG_CONFIGURE_OPTS_TARGET+=" --enable-opengles"

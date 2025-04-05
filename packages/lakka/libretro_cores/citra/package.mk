@@ -1,16 +1,23 @@
 PKG_NAME="citra"
 PKG_VERSION="a31aff7e1a3a66f525b9ea61633d2c5e5b0c8b31"
-PKG_ARCH="x86_64"
+PKG_ARCH="x86_64 aarch64"
 PKG_LICENSE="GPLv2+"
 PKG_SITE="https://github.com/libretro/citra"
 PKG_URL="${PKG_SITE}.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="A Nintendo 3DS Emulator"
-PKG_TOOLCHAIN="make"
+PKG_TOOLCHAIN="cmake"
 
-PKG_MAKE_OPTS_TARGET="HAVE_FFMPEG_STATIC=1 \
-                      FFMPEG_DISABLE_VDPAU=1 \
-                      HAVE_FFMPEG_CROSSCOMPILE=1"
+PKG_CMAKE_OPTS_TARGET="-DENABLE_TESTS=OFF \
+                       -DENABLE_DEDICATED_ROOM=OFF \
+                       -DENABLE_SDL2=OFF \
+                       -DENABLE_QT=OFF \
+                       -DENABLE_WEB_SERVICE=OFF \
+                       -DENABLE_SCRIPTING=OFF \
+                       -DENABLE_OPENAL=OFF \
+                       -DENABLE_LIBUSB=OFF \
+                       -DCITRA_ENABLE_BUNDLE_TARGET=OFF \
+                       -DCITRA_WARNINGS_AS_ERRORS=OFF"
 
 if [ "${OPENGL_SUPPORT}" = "yes" ]; then
   PKG_DEPENDS_TARGET+=" ${OPENGL}"
@@ -19,19 +26,6 @@ fi
 if [ "${OPENGLES_SUPPORT}" = "yes" ]; then
   PKG_DEPENDS_TARGET+=" ${OPENGLES}"
 fi
-
-pre_make_target() {
-  cd ${PKG_BUILD}
-  PKG_MAKE_OPTS_TARGET+=" FFMPEG_XC_CPU=${TARGET_CPU} \
-                          FFMPEG_XC_ARCH=${TARGET_ARCH} \
-                          FFMPEG_XC_PREFIX=${TARGET_PREFIX} \
-                          FFMPEG_XC_SYSROOT=${SYSROOT_PREFIX} \
-                          FFMPEG_XC_NM=${NM} \
-                          FFMPEG_XC_AR=${AR} \
-                          FFMPEG_XC_AS=${CC} \
-                          FFMPEG_XC_CC=${CC} \
-                          FFMPEG_XC_LD=${CC}"
-}
 
 makeinstall_target() {
   mkdir -p ${INSTALL}/usr/lib/libretro

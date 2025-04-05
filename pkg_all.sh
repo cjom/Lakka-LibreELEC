@@ -69,7 +69,9 @@ targets="\
 
 package=${2}
 declare -i failed=0
+declare -i succeeded=0
 failed_targets=""
+succeeded_targets=""
 skipped_targets=""
 
 for T in ${targets} ; do
@@ -121,6 +123,8 @@ for T in ${targets} ; do
 		failed_targets+="${target_name}\n"
 		echo -e "${activity} of package '${package}' failed for '${target_name}'.\n"
 	else
+		succeeded+=1
+		succeeded_targets+="${target_name}\n"
 		echo -e "${activity} of package '${package}' succeeded for '${target_name}'.\n"
 	fi
 
@@ -130,10 +134,14 @@ if [ -n "${skipped_targets}" ] ; then
 	echo -e "Following targets were skipped - could not find existing build folder:\n${skipped_targets}\n"
 fi
 
-if [ $failed -gt 0 ] ; then
-	echo -e "Failed to ${action} package '${package}' on following targets:\n${failed_targets}" >&2
-else
-	echo "Done."
+if [ ${failed} -gt 0 ] ; then
+	echo -e "Failed to ${action} package '${package}' on following ${failed} target(s):\n${failed_targets}\n" >&2
 fi
+
+if [ ${succeeded} -gt 0 ] ; then
+	echo -e "Successful ${action} of package '${package}' on following ${succeeded} target(s):\n${succeeded_targets}\n" >&2
+fi
+
+echo "Done."
 
 exit ${failed}
