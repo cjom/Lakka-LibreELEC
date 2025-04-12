@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Synk fork
+        id: synk_step
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
@@ -31,6 +32,7 @@ jobs:
           git merge upstream/Lakka-v6.x
           git push origin Lakka-v6.x
       - name: Get latest version of cores
+        id: get_cores_version_step
         if: ${{ ! cancelled() }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -99,6 +101,7 @@ jobs:
           echo "build_core_mame=${build_core_mame}" >> "$GITHUB_ENV"
           echo "build_core_mame=${build_core_mame}"
       - name: Install compiling tools
+        id: install_tools_step
         if: ${{ ( env.build_core_fbalpha2012 == 'true' || env.build_core_fbneo == 'true' || env.build_core_mame2003plus == 'true' || env.build_core_mame == 'true' ) && ! cancelled() }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -107,6 +110,7 @@ jobs:
           sudo apt-get -y remove '*azure*' '*firefox*'
           sudo apt-get install --assume-yes ca-certificates build-essential zip python3 xfonts-utils xsltproc default-jre unzip xz-utils texi2html texinfo libxml-parser-perl libparse-yapp-perl libjson-perl libncurses5-dev bc gawk wget zstd gperf lzop patchutils aria2 autoconf automake bison bzip2 coreutils flex g++ gcc gzip help2man libtool libtool-bin make p7zip p7zip-full rsync
       - name: Compile fbalpha2012 core
+        id: compile_fbalpha2012_step
         if: ${{ env.build_core_fbalpha2012 == 'true' && ! cancelled() }}
         shell: bash
         run: |
@@ -118,7 +122,9 @@ jobs:
           zip -9 -mr "${GITHUB_WORKSPACE}/cores-armv7-neon-hf/fbalpha2012_libretro.${fbalpha2012_latest_name}.zip" "fbalpha2012_libretro.${fbalpha2012_latest_name}"
           fi
           rm -rf "sources/fbalpha2012/fbalpha2012-${fbalpha2012_latest_version}"
+          echo "dorelease=${{ true }}" >> "$GITHUB_OUTPUT"
       - name: Compile fbneo core
+        id: compile_fbneo_step
         if: ${{ env.build_core_fbneo == 'true' && ! cancelled() }}
         shell: bash
         run: |
@@ -130,7 +136,9 @@ jobs:
           zip -9 -mr "${GITHUB_WORKSPACE}/cores-armv7-neon-hf/fbneo_libretro.${fbneo_latest_name}.zip" "fbneo_libretro.${fbneo_latest_name}"
           fi
           rm -rf "sources/fbneo/fbneo-${fbneo_latest_version}"
+          echo "dorelease=${{ true }}" >> "$GITHUB_OUTPUT"
       - name: Compile mame2003_plus core
+        id: compile_mame2003_plus_step
         if: ${{ env.build_core_mame2003plus == 'true' && ! cancelled() }}
         shell: bash
         run: |
@@ -143,7 +151,9 @@ jobs:
           zip -9 -mr "${GITHUB_WORKSPACE}/cores-armv7-neon-hf/mame2003_plus_libretro.${mame2003plus_latest_name}.zip" "mame2003_plus_libretro.${mame2003plus_latest_name}"
           fi
           rm -rf "sources/mame2003_plus/mame2003_plus-${mame2003plus_latest_version}"
+          echo "dorelease=${{ true }}" >> "$GITHUB_OUTPUT"
       - name: Compile mame core
+        id: compile_mame_step
         if: ${{ env.build_core_mame == 'true' && ! cancelled() }}
         shell: bash
         run: |
@@ -156,8 +166,9 @@ jobs:
           zip -9 -mr "${GITHUB_WORKSPACE}/cores-armv7-neon-hf/mame_libretro.${mame_tag_name}.zip" "mame_libretro.${mame_tag_name}"
           fi
           rm -rf "sources/mame/mame-${mame_tag_version}"
+          echo "dorelease=${{ true }}" >> "$GITHUB_OUTPUT"
       - name: Create release
-        if: ${{ ( env.build_core_fbalpha2012 == 'true' || env.build_core_fbneo == 'true' || env.build_core_mame2003plus == 'true' || env.build_core_mame == 'true' ) && ! cancelled() }}
+        if: ${{ ( false || steps.compile_fbalpha2012_step.outputs.dorelease || steps.compile_fbneo_step.outputs.dorelease || steps.compile_mame2003_plus_step.outputs.dorelease || steps.compile_mame_step.outputs.dorelease ) && ! cancelled() }}
         uses: softprops/action-gh-release@master
         with:
           files: ./cores-armv7-neon-hf/*.zip
@@ -169,6 +180,7 @@ jobs:
             mame2003plus: ${{ env.mame2003plus_latest_name }}
             mame:         ${{ env.mame_tag_name }}
       - name: Clean up old releases
+        if: ${{ ( false || steps.compile_fbalpha2012_step.outputs.dorelease || steps.compile_fbneo_step.outputs.dorelease || steps.compile_mame2003_plus_step.outputs.dorelease || steps.compile_mame_step.outputs.dorelease ) && ! cancelled() }}
         uses: dev-drprasad/delete-older-releases@master
         with:
           keep_latest: 3
