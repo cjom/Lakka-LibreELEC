@@ -1,0 +1,13 @@
+[Unit]
+Description=RETROFLAG Pi CASE series - safe shutdown service
+ConditionPathExists=|/storage/.cache/services/safeshutdown.conf
+
+[Service]
+ExecStart=/usr/bin/retroflag_picase_safeshutdown.py
+TimeoutStopSec=5
+Restart=always
+RestartSec=5
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target

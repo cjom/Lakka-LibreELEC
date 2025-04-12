@@ -9,6 +9,8 @@ LIBRETRO_CORES="\
                 2048 \
                 81 \
                 a5200 \
+                anarch \
+                ardens \
                 atari800 \
                 beetle_bsnes \
                 beetle_lynx \
@@ -46,6 +48,7 @@ LIBRETRO_CORES="\
                 dosbox_core \
                 dosbox_pure \
                 dosbox_svn \
+                doukutsu_rs \
                 easyrpg \
                 emux_sms\
                 ecwolf \
@@ -72,19 +75,21 @@ LIBRETRO_CORES="\
                 hatari \
                 higan_sfc \
                 higan_sfc_balanced \
-                holani \
                 jaxe \
                 jumpnbump \
                 kronos \
                 lowres_nx \
                 lr_moonlight \
+                lrps2 \
                 lutro \
+                m2000 \
                 mame \
                 mame2000 \
                 mame2003_plus \
                 mame2010 \
                 mame2015 \
                 melonds \
+                melondsds \
                 meowpc98 \
                 mesen \
                 mesen_s \
@@ -96,14 +101,15 @@ LIBRETRO_CORES="\
                 mupen64plus_next \
                 neocd \
                 nestopia \
+                noods \
                 np2kai \
                 numero \
                 nxengine \
                 o2em \
                 openlara \
                 opera \
+                panda3ds \
                 parallel_n64 \
-                pcsx2 \
                 pcsx_rearmed \
                 picodrive \
                 play \
@@ -116,6 +122,7 @@ LIBRETRO_CORES="\
                 puae \
                 puae2021 \
                 px68k \
+                pzretro \
                 quasi88 \
                 quicknes \
                 race \
@@ -134,6 +141,7 @@ LIBRETRO_CORES="\
                 stella2014 \
                 superbroswar \
                 swanstation \
+                tamalibretro \
                 tgbdual \
                 theodore \
                 thepowdertoy \
@@ -155,91 +163,34 @@ LIBRETRO_CORES="\
                 yabause \
                "
 
-# disable cores based on PROJECT/DEVICE
-if [ "${PROJECT}" = "RPi" ]; then
-  EXCLUDE_LIBRETRO_CORES+=" yabasanshiro"
-  if [ "${DEVICE}" = "RPi" -o "${DEVICE}" = "RPiZero-GPiCase" ]; then
-    EXCLUDE_LIBRETRO_CORES+="\
-                             beetle_bsnes \
-                             beetle_psx \
-                             beetle_saturn \
-                             beetle_vb \
-                             bk_emulator \
-                             bsnes \
-                             bsnes2014 \
-                             bsnes_hd \
-                             bsnes_mercury \
-                             citra \
-                             desmume \
-                             desmume_2015 \
-                             dolphin \
-                             dosbox \
-                             dosbox_core \
-                             dosbox_pure \
-                             dosbox_svn \
-                             fbneo \
-                             flycast \
-                             genesis_plus_gx \
-                             higan_sfc \
-                             higan_sfc_balanced \
-                             kronos \
-                             mame \
-                             mame2003_plus \
-                             mame2010 \
-                             mame2015 \
-                             melonds \
-                             meowpc98 \
-                             mesen \
-                             mesen_s \
-                             mupen64plus_next \
-                             openlara \
-                             opera \
-                             parallel_n64 \
-                             play \
-                             ppsspp \
-                             puae \
-                             same_cdi \
-                             snes9x \
-                             snes9x2005_plus \
-                             snes9x2010 \
-                             swanstation \
-                             uae4arm \
-                             vbam \
-                             virtualjaguar \
-                             vircon32 \
-                             vitaquake2 \
-                             yabause \
-                            "
-  elif [ "${DEVICE}" = "RPi2" ]; then
-    EXCLUDE_LIBRETRO_CORES+=" play"
-  elif [ "${DEVICE}" = "RPiZero2-GPiCase" ]; then
-    EXCLUDE_LIBRETRO_CORES+=" flycast kronos openlara play ppsspp vircon32 swanstation"
-  elif [ "${DEVICE}" = "RPi3" ]; then
-    EXCLUDE_LIBRETRO_CORES+=" yabasanshiro"
-  fi
-elif [ "${PROJECT}" = "Amlogic" -o "${PROJECT}" = "Rockchip" -o "${PROJECT}" = "Allwinner" ]; then
-  EXCLUDE_LIBRETRO_CORES+=" yabasanshiro"
-elif [ "${PROJECT}" = "Generic" -a "${ARCH}" = "i386" ]; then
-  EXCLUDE_LIBRETRO_CORES+=" fake_08 openlara"
-elif [ "${PROJECT}" = "Ayn" -a "${DEVICE}" = "Odin" ]; then
-  EXCLUDE_LIBRETRO_CORES+=" lr_moonlight"
-elif [ "${PROJECT}" = "L4T" -a "${DEVICE}" = "Switch" ]; then
-# lr_moonlight does not currently build for Switch because of newer OpenSSL package. (older package is not compatible with ffmpeg)
-# Stella Doesnt Build.
-# Holani Doesnt Build.
-  EXCLUDE_LIBRETRO_CORES+=" stella holani lr_moonlight"
-fi
+# List of libretro cores to start compiling as
+# early as possible, as they take longer to compile
+EARLY_START_LR_CORES="\
+                      mame \
+                      scummvm \
+                      mame2015 \
+                      mame2010 \
+                      same_cdi \
+                      vice \
+                      dolphin \
+                      ppsspp \
+                      panda3ds \
+                      fbneo \
+                     "
 
-# disable cores that are only for specific targets
-# fbalpha2012 and mame2000 only for RPi/RPiZero-GPiCase
-if [ "${PROJECT}" != "RPi" ]; then
-  EXCLUDE_LIBRETRO_CORES+=" fbalpha2012 mame2000"
-elif [ "${DEVICE}" != "RPi" -a "${DEVICE}" != "RPiZero-GPiCase" ]; then
-  EXCLUDE_LIBRETRO_CORES+=" fbalpha2012 mame2000"
-fi
-# lr_moonlight, boom3, and vitaquake for now only for Switch
-if [ "${PROJECT}" != "L4T" -a "${DEVICE}" != "Switch" ]; then
-  EXCLUDE_LIBRETRO_CORES+=" boom3 vitaquake3 lr_moonlight"
+# put early start cores to the front of the list
+# first remove them, to avoid duplicates
+for core in ${EARLY_START_LR_CORES} ; do
+  LIBRETRO_CORES="${LIBRETRO_CORES// ${core} /}"
+done
+
+# prepend the list
+LIBRETRO_CORES="${EARLY_START_LR_CORES} ${LIBRETRO_CORES}"
+
+# override above with custom list via env CUSTOM_LIBRETRO_CORES="core1 core2"
+# passed to make
+if [ -n "${CUSTOM_LIBRETRO_CORES}" ]; then
+  LIBRETRO_CORES="${CUSTOM_LIBRETRO_CORES}"
 fi
 
 # disable cores that do not build for OPENGLES
@@ -247,27 +198,127 @@ if [ "${OPENGLES_SUPPORT}" = "yes" ]; then
   EXCLUDE_LIBRETRO_CORES+=" kronos"
 fi
 
-# disable holani core for other archs than x86_64
-if [ ! "${ARCH}" = "x86_64" ]; then
-  EXCLUDE_LIBRETRO_CORES+=" holani"
+# disable cores based on PROJECT/DEVICE
+if [ "${PROJECT}" = "Allwinner" ]; then
+  EXCLUDE_LIBRETRO_CORES+=" lr_moonlight"
+
+elif [ "${PROJECT}" = "Amlogic" ]; then
+  EXCLUDE_LIBRETRO_CORES+=" lr_moonlight \
+                            panda3ds"
+
+elif [ "${PROJECT}" = "Ayn" ]; then
+  EXCLUDE_LIBRETRO_CORES+=" lr_moonlight"
+
+elif [ "${PROJECT}" = "Generic" ]; then
+  EXCLUDE_LIBRETRO_CORES+=" lr_moonlight"
+
+elif [ "${PROJECT}" = "L4T" ]; then
+  EXCLUDE_LIBRETRO_CORES+=" citra \
+                            lr_moonlight \
+                            mame \
+                            melondsds \
+                            panda3ds \
+                            stella"
+
+elif [ "${PROJECT}" = "NXP" ]; then
+  EXCLUDE_LIBRETRO_CORES+=" lr_moonlight"
+
+  if [ "${DEVICE}" = "iMX8" ]; then
+    EXCLUDE_LIBRETRO_CORES+=" panda3ds"
+  fi
+
+elif [ "${PROJECT}" = "Rockchip" ]; then
+  EXCLUDE_LIBRETRO_CORES+=" lr_moonlight"
+
+elif [ "${PROJECT}" = "RPi" ]; then
+  EXCLUDE_LIBRETRO_CORES+=" lr_moonlight"
+
+  if [ "${DEVICE}" = "RPi" -o "${DEVICE}" = "RPiZero-GPiCase" ]; then
+    EXCLUDE_LIBRETRO_CORES+=" beetle_bsnes \
+                              beetle_psx \
+                              beetle_saturn \
+                              beetle_vb \
+                              bk_emulator \
+                              boom3 \
+                              bsnes \
+                              bsnes2014 \
+                              bsnes_hd \
+                              bsnes_mercury \
+                              desmume \
+                              desmume_2015 \
+                              dolphin \
+                              dosbox \
+                              dosbox_core \
+                              dosbox_pure \
+                              dosbox_svn \
+                              fbneo \
+                              flycast \
+                              genesis_plus_gx \
+                              higan_sfc \
+                              higan_sfc_balanced \
+                              mame \
+                              mame2003_plus \
+                              mame2010 \
+                              mame2015 \
+                              melonds \
+                              melondsds \
+                              meowpc98 \
+                              mesen \
+                              mesen_s \
+                              mupen64plus_next \
+                              openlara \
+                              opera \
+                              panda3ds \
+                              parallel_n64 \
+                              play \
+                              ppsspp \
+                              puae \
+                              same_cdi \
+                              snes9x \
+                              snes9x2005_plus \
+                              snes9x2010 \
+                              swanstation \
+                              uae4arm \
+                              vbam \
+                              virtualjaguar \
+                              vircon32 \
+                              vitaquake2 \
+                              vitaquake3 \
+                              yabasanshiro \
+                              yabause"
+
+  elif [ "${DEVICE}" = "RPi2" ]; then
+    EXCLUDE_LIBRETRO_CORES+=" panda3ds \
+                              play"
+
+  elif [ "${DEVICE}" = "RPiZero2-GPiCase" ]; then
+    EXCLUDE_LIBRETRO_CORES+=" boom3 \
+                              flycast \
+                              openlara \
+                              panda3ds \
+                              play \
+                              ppsspp \
+                              vircon32 \
+                              vitaquake3 \
+                              swanstation \
+                              yabasanshiro"
+
+  elif [ "${DEVICE}" = "RPi3" -o "${DEVICE}" = "RPiZero2-GPiCase2W" ]; then
+    EXCLUDE_LIBRETRO_CORES+=" panda3ds"
+
+  fi
+
+elif [ "${PROJECT}" = "Samsung" ]; then
+  EXCLUDE_LIBRETRO_CORES+=" lr_moonlight"
 fi
 
-# exclude some cores at build time via env EXCLUDE_LIBRETRO_CORES="..." passed to make
+# exclude some cores at build time via env EXCLUDE_LIBRETRO_CORES="core1 core2"
+# passed to make and cores added to the env above
 if [ -n "${EXCLUDE_LIBRETRO_CORES}" ]; then
   for core in ${EXCLUDE_LIBRETRO_CORES} ; do
     LIBRETRO_CORES="${LIBRETRO_CORES// ${core} /}"
   done
 fi
-
-# override above with custom list via env CUSTOM_LIBRETRO_CORES="..." passed to make
-if [ -n "${CUSTOM_LIBRETRO_CORES}" ]; then
-  LIBRETRO_CORES="${CUSTOM_LIBRETRO_CORES}"
-fi
-
-# temporary disabled due to build errors for all targets
-for core in citra pcsx2 ; do
-  LIBRETRO_CORES="${LIBRETRO_CORES// ${core} /}"
-done
 
 # finally set package dependencies
 PKG_DEPENDS_TARGET="${LIBRETRO_CORES}"
