@@ -187,7 +187,7 @@ jobs:
         if: ${{ ( false || steps.compile_fbalpha2012_step.outputs.dorelease || steps.compile_fbneo_step.outputs.dorelease || steps.compile_mame2003_plus_step.outputs.dorelease || steps.compile_mame_step.outputs.dorelease ) && ! cancelled() }}
         uses: dev-drprasad/delete-older-releases@master
         with:
-          keep_latest: 3
+          keep_latest: 6
           delete_tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
