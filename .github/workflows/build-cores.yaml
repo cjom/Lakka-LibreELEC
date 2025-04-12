@@ -18,8 +18,6 @@ jobs:
         run: |
           cd ..
           rm -rf Lakka-LibreELEC
-          sudo apt-get update
-          sudo apt-get install --assume-yes git curl
           git clone "https://${GITHUB_REPOSITORY_OWNER}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" Lakka-LibreELEC
           cd Lakka-LibreELEC
           git config --global --add safe.directory "${GITHUB_WORKSPACE}"
@@ -107,8 +105,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
+          sudo apt-get update
           sudo apt-get -y remove '*azure*' '*firefox*'
+          sudo apt-get -y upgrade
           sudo apt-get install --assume-yes ca-certificates build-essential zip python3 xfonts-utils xsltproc default-jre unzip xz-utils texi2html texinfo libxml-parser-perl libparse-yapp-perl libjson-perl libncurses5-dev bc gawk wget zstd gperf lzop patchutils aria2 autoconf automake bison bzip2 coreutils flex g++ gcc gzip help2man libtool libtool-bin make p7zip p7zip-full rsync
+          sudo apt-get -y autoremove
+          sudo apt-get -y clean
+          sudo rm -rf /var/lib/apt/lists/*
       - name: Compile fbalpha2012 core
         id: compile_fbalpha2012_step
         if: ${{ env.build_core_fbalpha2012 == 'true' && ! cancelled() }}
