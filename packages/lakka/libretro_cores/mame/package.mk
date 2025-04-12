@@ -29,26 +29,25 @@ pre_make_target() {
   PKG_MAKE_OPTS_TARGET+=" OVERRIDE_CC=${CC} OVERRIDE_CXX=${CXX} OVERRIDE_LD=${LD}"
   sed -i scripts/genie.lua \
       -e 's|-static-libstdc++||g'
-
   # remove bfm* drivers to save space
   find src/mame/bfm/ -type f | xargs grep -e 'GAME(\|GAMEL' | cut -f 2 -d "," | sort -bu | tr -d "[:blank:]" > games.list
   find src/mame/bfm/ -type f | xargs sed -i '/GAME[L]*(/d'
   # remove skeleton drivers to save space
   find src/mame/ -type f | xargs grep -e 'MACHINE_IS_SKELETON\|MACHINE_MECHANICAL\|MACHINE_FLAGS_MECHANICAL' | grep -v 'define' | grep -v 'setname' | cut -f 1 -d ":" | sort -u > machines1.list
   find src/mame/ -type f | xargs grep -e 'MACHINE_IS_SKELETON\|MACHINE_MECHANICAL\|MACHINE_FLAGS_MECHANICAL' | grep -v 'define' | grep -v 'setname' | cut -f 2 -d "," | sort -bu | tr -d "[:blank:]" >> games.list
-  cat machines1.list | while read file ; do sed -i '/define.*MACHINE_IS_SKELETON/p;/setname.*MACHINE_IS_SKELETON/p;/MACHINE_IS_SKELETON/d' $$file ; done
+  cat machines1.list | while read file ; do sed -i '/define.*MACHINE_IS_SKELETON/p;/setname.*MACHINE_IS_SKELETON/p;/MACHINE_IS_SKELETON/d' ${file} ; done
   # do not remove '#define GAME_FLAGS' and other definition lines
-  cat machines1.list | while read file ; do sed -i '/define.*MACHINE_MECHANICAL/p;/setname.*MACHINE_MECHANICAL/p;/MACHINE_MECHANICAL/d' $$file ; done
-  cat machines1.list | while read file ; do sed -i '/define.*MACHINE_FLAGS_MECHANICAL/p;/setname.*MACHINE_FLAGS_MECHANICAL/p;/MACHINE_FLAGS_MECHANICAL/d' $$file ; done
+  cat machines1.list | while read file ; do sed -i '/define.*MACHINE_MECHANICAL/p;/setname.*MACHINE_MECHANICAL/p;/MACHINE_MECHANICAL/d' ${file} ; done
+  cat machines1.list | while read file ; do sed -i '/define.*MACHINE_FLAGS_MECHANICAL/p;/setname.*MACHINE_FLAGS_MECHANICAL/p;/MACHINE_FLAGS_MECHANICAL/d' ${file} ; done
   # remove remaining MECHANICAL games using 'GAME_FLAGS' label
   find src/mame/ -type f | xargs grep -e 'GAME_FLAGS.*MACHINE_MECHANICAL' | cut -f 1 -d ":" | sort -u > machines2.list
-  cat machines2.list | while read file ; do grep 'GAME_FLAGS' $$file | grep -v 'define' | grep -v 'setname' | cut -f 2 -d "," | sort -bu | tr -d "[:blank:]" >> games.list; done
-  cat machines2.list | while read file ; do sed -i '/define GAME_FLAGS/p;/setname.*GAME_FLAGS/p;/GAME_FLAGS/d' $$file ; done
+  cat machines2.list | while read file ; do grep 'GAME_FLAGS' ${file} | grep -v 'define' | grep -v 'setname' | cut -f 2 -d "," | sort -bu | tr -d "[:blank:]" >> games.list; done
+  cat machines2.list | while read file ; do sed -i '/define GAME_FLAGS/p;/setname.*GAME_FLAGS/p;/GAME_FLAGS/d' ${file} ; done
         # remove remaining MECHANICAL games using 'GAME_CUSTOM' label
         find src/mame/ -type f | xargs grep -e 'GAME_CUSTOM' | cut -f 1 -d ":" | sort -u > machines3.list
-        cat machines3.list | while read file ; do grep 'GAME_CUSTOM' $$file | grep 'CRC' | grep 'SHA' | cut -f 2 -d "," | sort -bu | tr -d "[:blank:]" >> games.list; done
+        cat machines3.list | while read file ; do grep 'GAME_CUSTOM' ${file} | grep 'CRC' | grep 'SHA' | cut -f 2 -d "," | sort -bu | tr -d "[:blank:]" >> games.list; done
   # Remove reference to skeleton|mechanical drivers in mame.lst
-  cat games.list | while read file ; do sed -i /$$file/d src/mame/mame.lst ; done
+  cat games.list | while read file ; do sed -i /${file}/d src/mame/mame.lst ; done
 }
 
 make_target() {
